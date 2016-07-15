@@ -195,13 +195,20 @@ NSString *const kContinueLabelText = @"Tap to continue";
                      }];
 }
 
+- (void)end {
+    [self cleanup:NO];
+}
+
 - (void)skipCoach {
+    if ([self.delegate respondsToSelector:@selector(coachMarksViewSkipButtonClicked:)]) {
+        [self.delegate coachMarksViewSkipButtonClicked:self];
+    }
     [self goToCoachMarkIndexed:self.coachMarks.count];
 }
 
 - (void)handleSingleTap:(UITapGestureRecognizer *)recognizer {
     [self.delegate coachMarksViewDidClicked:self atIndex:markIndex];
-    [self cleanup];
+    [self cleanup:YES];
 }
 
 - (UIImage*)fetchImage:(NSString*)name {
@@ -217,7 +224,7 @@ NSString *const kContinueLabelText = @"Tap to continue";
 - (void)goToCoachMarkIndexed:(NSUInteger)index {
     // Out of bounds
     if (index >= self.coachMarks.count) {
-        [self cleanup];
+        [self cleanup:YES];
         return;
     }
     
@@ -433,14 +440,19 @@ NSString *const kContinueLabelText = @"Tap to continue";
 
 #pragma mark - Cleanup
 
-- (void)cleanup {
+- (void)cleanup:(BOOL)animated {
     // Delegate (coachMarksViewWillCleanup:)
     if ([self.delegate respondsToSelector:@selector(coachMarksViewWillCleanup:)]) {
         [self.delegate coachMarksViewWillCleanup:self];
     }
-    
+    CGFloat duration;
+    if (animated) {
+        duration = self.animationDuration;
+    } else {
+        duration = 0.0;
+    }
     // Fade out self
-    [UIView animateWithDuration:self.animationDuration
+    [UIView animateWithDuration:duration
                      animations:^{
                          self.alpha = 0.0f;
                      }
