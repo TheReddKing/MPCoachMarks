@@ -401,8 +401,8 @@ NSString *const kContinueLabelText = @"Tap to continue";
             } completion:nil];
         } else if (markIndex > 0 && lblContinue != nil) {
             // Otherwise, remove the lbl
-            [lblContinue removeFromSuperview];
-            lblContinue = nil;
+//            [lblContinue removeFromSuperview];
+//            lblContinue = nil;
         }
     }
     
